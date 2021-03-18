@@ -3,8 +3,11 @@ import { User } from '../models/user.model';
 import bcrypt from 'bcrypt';
 import Token from '../classes/token';
 import { checkToken } from '../middlewares/auth'
+import { FileUpload } from '../interfaces/file-upload';
+import FileSystem from '../classes/fileSystem';
 
 const userRoutes = Router();
+const fileSystem = new FileSystem();
 
 // Login
 userRoutes.post('/login', (req: Request, res: Response) => {
@@ -118,10 +121,47 @@ userRoutes.post('/update', checkToken, (req: any, res: Response) => {
             ok: true,
             token: userToken
         });
-    })
-
-
+    });
 });
 
+// GET Users
+userRoutes.get('/', async (req: any, res: Response) => {
+
+    const users = await User.find().sort({ _id: -1 }).exec()  //.sort() ordenar .limit() limitar resultados
+
+    res.json({
+        ok: true,
+        users
+    })
+
+})
+
+// Upload Images
+userRoutes.post('/upload', checkToken, (req: any, res: Response) => {
+
+    if (!req.files) {
+        return res.status(400).json({
+            ok: false,
+            mensaje: 'No se subió ningún archivo'
+        });
+    }
+
+    const file = req.files.img;
+
+    if (!file.mimetype.includes('image')) {
+        return res.status(400).json({
+            ok: false,
+            mensaje: 'El archivo no es una imagen'
+        });
+    }
+
+    fileSystem.saveTempImage(file, req.user._id);
+
+    res.json({
+        ok: true,
+        file: file
+    })
+
+})
 
 export default userRoutes;

@@ -1,7 +1,11 @@
 import Server from "./classes/server";
-import userRoutes from "./routes/user";
 import mongoose from 'mongoose';
-import bodyParser from 'body-parser'
+
+import bodyParser from 'body-parser';
+import fileUpload from 'express-fileupload';
+
+import userRoutes from "./routes/user";
+import swipeRoutes from "./routes/swipe";
 
 
 const server = new Server();
@@ -10,8 +14,12 @@ const server = new Server();
 server.app.use(bodyParser.urlencoded({ extended: true }));
 server.app.use(bodyParser.json());
 
+// FILE UPLOAD
+server.app.use(fileUpload());
+
 // ROUTES
 server.app.use('/user', userRoutes);
+server.app.use('/swipe', swipeRoutes);
 
 // DB
 mongoose.connect('mongodb://localhost:27017/badoog',
