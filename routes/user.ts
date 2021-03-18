@@ -137,12 +137,12 @@ userRoutes.get('/', async (req: any, res: Response) => {
 })
 
 // Upload Images
-userRoutes.post('/upload', checkToken, (req: any, res: Response) => {
+userRoutes.post('/upload', checkToken, async (req: any, res: Response) => {
 
     if (!req.files) {
         return res.status(400).json({
             ok: false,
-            mensaje: 'No se subió ningún archivo'
+            mensaje: 'No se subió ningún archivo',
         });
     }
 
@@ -155,13 +155,40 @@ userRoutes.post('/upload', checkToken, (req: any, res: Response) => {
         });
     }
 
-    fileSystem.saveTempImage(file, req.user._id);
+    await fileSystem.saveTempImage(file, req.user._id).then(console.log).catch(console.error);
+
+
+
+    const user = {
+        img: req.user._id + ".jpg",
+    };
+
+    User.findByIdAndUpdate(req.user._id, user, { new: true }, (err, userDB) => {
+        if (err) throw err;
+        if (!userDB) {
+            return res.json({
+                ok: false,
+                mensaje: 'No existe el usuario'
+            })
+        }
+    })
 
     res.json({
         ok: true,
-        file: file
+        file: file,
+        res: req.user._id
     })
 
 })
+
+userRoutes.get('/imagen/:userid/:img', (req: any, res: Response) => {
+    const userId = req.params.userid;
+    const img = req.params.img;
+
+    const path = fileSystem.getImgUrl(userId, img);
+
+    res.sendFile(path);
+})
+
 
 export default userRoutes;

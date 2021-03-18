@@ -7,6 +7,7 @@ const server_1 = __importDefault(require("./classes/server"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const express_fileupload_1 = __importDefault(require("express-fileupload"));
+const cors_1 = __importDefault(require("cors"));
 const user_1 = __importDefault(require("./routes/user"));
 const swipe_1 = __importDefault(require("./routes/swipe"));
 const server = new server_1.default();
@@ -15,6 +16,8 @@ server.app.use(body_parser_1.default.urlencoded({ extended: true }));
 server.app.use(body_parser_1.default.json());
 // FILE UPLOAD
 server.app.use(express_fileupload_1.default());
+// CORS
+server.app.use(cors_1.default({ origin: true, credentials: true }));
 // ROUTES
 server.app.use('/user', user_1.default);
 server.app.use('/swipe', swipe_1.default);

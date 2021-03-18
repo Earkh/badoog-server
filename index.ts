@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 
 import bodyParser from 'body-parser';
 import fileUpload from 'express-fileupload';
+import cors from 'cors';
 
 import userRoutes from "./routes/user";
 import swipeRoutes from "./routes/swipe";
@@ -16,6 +17,9 @@ server.app.use(bodyParser.json());
 
 // FILE UPLOAD
 server.app.use(fileUpload());
+
+// CORS
+server.app.use(cors({ origin: true, credentials: true }));
 
 // ROUTES
 server.app.use('/user', userRoutes);

@@ -5,13 +5,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
-const uniqid_1 = __importDefault(require("uniqid"));
 class FileSystem {
     constructor() { }
     ;
     saveTempImage(file, userId) {
-        const path = this.createUserFolder(userId);
-        const fileName = this.generateUniqueName(file.name);
+        return new Promise((resolve, reject) => {
+            const path = this.createUserFolder(userId);
+            const fileName = userId + ".jpg";
+            file.mv(`${path}/${fileName}`, (err) => {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    resolve();
+                }
+            });
+        });
     }
     createUserFolder(userId) {
         const pathUser = path_1.default.resolve(__dirname, '../uploads', userId);
@@ -23,11 +32,9 @@ class FileSystem {
         }
         return pathUserTemp;
     }
-    generateUniqueName(originalName) {
-        const nameArray = originalName.split('.');
-        const extension = nameArray[nameArray.length - 1];
-        const uniqueName = uniqid_1.default();
-        return `${uniqueName}.${extension}`;
+    getImgUrl(userId, img) {
+        const pathImg = path_1.default.resolve(__dirname, '../uploads', userId, 'temp', img);
+        return pathImg;
     }
 }
 exports.default = FileSystem;

@@ -2,16 +2,30 @@ import { FileUpload } from "../interfaces/file-upload";
 
 import path from 'path'
 import fs from 'fs';
-import uniqid from 'uniqid';
 
 export default class FileSystem {
     constructor() { };
 
+
+
     saveTempImage(file: FileUpload, userId: string) {
 
-        const path = this.createUserFolder(userId);
+        return new Promise((resolve: any, reject) => {
 
-        const fileName = this.generateUniqueName(file.name);
+            const path = this.createUserFolder(userId);
+
+            const fileName = userId + ".jpg";
+
+            file.mv(`${path}/${fileName}`, (err: any) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            });
+
+        });
+
     }
 
     private createUserFolder(userId: string) {
@@ -28,12 +42,13 @@ export default class FileSystem {
         return pathUserTemp;
     }
 
-    private generateUniqueName(originalName: string) {
-        const nameArray = originalName.split('.');
-        const extension = nameArray[nameArray.length - 1];
+    getImgUrl(userId: string, img: string) {
 
-        const uniqueName = uniqid();
+        const pathImg = path.resolve(__dirname, '../uploads', userId, 'temp', img);
 
-        return `${uniqueName}.${extension}`
+
+        return pathImg
     }
+
+
 }
