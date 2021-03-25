@@ -87,6 +87,14 @@ userRoutes.post('/create', (req, res) => {
         });
     });
 });
+// Get user
+userRoutes.get('/info', auth_1.checkToken, (req, res) => {
+    const user = req.user;
+    res.json({
+        ok: true,
+        user
+    });
+});
 // Update user
 userRoutes.post('/update', auth_1.checkToken, (req, res) => {
     const user = {

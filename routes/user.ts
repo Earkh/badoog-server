@@ -89,6 +89,16 @@ userRoutes.post('/create', (req: Request, res: Response) => {
 
 });
 
+// Get user
+userRoutes.get('/info', checkToken, (req: any, res: Response) => {
+    const user = req.user;
+
+    res.json({
+        ok: true,
+        user
+    });
+})
+
 // Update user
 userRoutes.post('/update', checkToken, (req: any, res: Response) => {
 
@@ -189,6 +199,7 @@ userRoutes.get('/imagen/:userid/:img', (req: any, res: Response) => {
 
     res.sendFile(path);
 })
+
 
 
 export default userRoutes;
