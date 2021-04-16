@@ -3,7 +3,6 @@ import { User } from '../models/user.model';
 import bcrypt from 'bcrypt';
 import Token from '../classes/token';
 import { checkToken } from '../middlewares/auth'
-import { FileUpload } from '../interfaces/file-upload';
 import FileSystem from '../classes/fileSystem';
 
 const userRoutes = Router();
@@ -43,9 +42,7 @@ userRoutes.post('/login', (req: Request, res: Response) => {
                 mensaje: 'Usuario/Contraseña no son correctos'
             });
         }
-
     });
-
 });
 
 // Create user
@@ -79,14 +76,11 @@ userRoutes.post('/create', (req: Request, res: Response) => {
         });
 
     }).catch(err => {
-
         res.json({
             ok: false,
             err
         });
-
     });
-
 });
 
 // Get user
@@ -120,7 +114,6 @@ userRoutes.post('/update', checkToken, (req: any, res: Response) => {
             })
         }
 
-
         const userToken = Token.getJwtToken({
             _id: userDB._id,
             name: userDB.name,
@@ -134,16 +127,29 @@ userRoutes.post('/update', checkToken, (req: any, res: Response) => {
     });
 });
 
-// GET Users
-userRoutes.get('/', async (req: any, res: Response) => {
+// GET Filtered Users
+userRoutes.get('/:sex/:size/:minAge/:maxAge', async (req: any, res: Response) => {
 
-    const users = await User.find().sort({ _id: -1 }).exec()  //.sort() ordenar .limit() limitar resultados
+    const filters = {
+        sex: req.params.sex,
+        size: req.params.size,
+        minAge: req.params.minAge,
+        maxAge: req.params.maxAge
+    };
 
-    res.json({
-        ok: true,
-        users
-    })
-
+    if (filters.sex == "indiferente") {
+        const users = await User.find({ sex: { $ne: undefined }, size: filters.size, age: { $gt: filters.minAge, $lt: filters.maxAge } }).sort({ _id: -1 }).exec()
+        res.json({
+            ok: true,
+            users
+        })
+    } else {
+        const users = await User.find({ sex: filters.sex, size: filters.size, age: { $gt: filters.minAge, $lt: filters.maxAge } }).sort({ _id: -1 }).exec()  //.sort() ordenar .limit() limitar resultados
+        res.json({
+            ok: true,
+            users
+        })
+    }
 })
 
 // Upload Images
@@ -167,8 +173,6 @@ userRoutes.post('/upload', checkToken, async (req: any, res: Response) => {
 
     await fileSystem.saveTempImage(file, req.user._id).then(console.log).catch(console.error);
 
-
-
     const user = {
         img: req.user._id + ".jpg",
     };
@@ -188,9 +192,9 @@ userRoutes.post('/upload', checkToken, async (req: any, res: Response) => {
         file: file,
         res: req.user._id
     })
-
 })
 
+// GET User image
 userRoutes.get('/imagen/:userid/:img', (req: any, res: Response) => {
     const userId = req.params.userid;
     const img = req.params.img;
@@ -199,7 +203,5 @@ userRoutes.get('/imagen/:userid/:img', (req: any, res: Response) => {
 
     res.sendFile(path);
 })
-
-
 
 export default userRoutes;

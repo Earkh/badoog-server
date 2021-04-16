@@ -27,7 +27,7 @@ server.app.use('/swipe', swipeRoutes);
 
 // DB
 mongoose.connect('mongodb://localhost:27017/badoog',
-    { useNewUrlParser: true, useCreateIndex: true }, (err) => {
+    { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true }, (err) => {
         if (err) throw err;
 
         console.log('DB connected');

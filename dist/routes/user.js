@@ -125,13 +125,28 @@ userRoutes.post('/update', auth_1.checkToken, (req, res) => {
         });
     });
 });
-// GET Users
-userRoutes.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const users = yield user_model_1.User.find().sort({ _id: -1 }).exec(); //.sort() ordenar .limit() limitar resultados
-    res.json({
-        ok: true,
-        users
-    });
+// GET Filtered Users
+userRoutes.get('/:sex/:size/:minAge/:maxAge', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const filters = {
+        sex: req.params.sex,
+        size: req.params.size,
+        minAge: req.params.minAge,
+        maxAge: req.params.maxAge
+    };
+    if (filters.sex == "indiferente") {
+        const users = yield user_model_1.User.find({ sex: { $ne: undefined }, size: filters.size, age: { $gt: filters.minAge, $lt: filters.maxAge } }).sort({ _id: -1 }).exec();
+        res.json({
+            ok: true,
+            users
+        });
+    }
+    else {
+        const users = yield user_model_1.User.find({ sex: filters.sex, size: filters.size, age: { $gt: filters.minAge, $lt: filters.maxAge } }).sort({ _id: -1 }).exec(); //.sort() ordenar .limit() limitar resultados
+        res.json({
+            ok: true,
+            users
+        });
+    }
 }));
 // Upload Images
 userRoutes.post('/upload', auth_1.checkToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -168,6 +183,7 @@ userRoutes.post('/upload', auth_1.checkToken, (req, res) => __awaiter(void 0, vo
         res: req.user._id
     });
 }));
+// GET User image
 userRoutes.get('/imagen/:userid/:img', (req, res) => {
     const userId = req.params.userid;
     const img = req.params.img;

@@ -1,19 +1,37 @@
 import { Router, Response } from 'express';
-import { checkToken } from '../middlewares/auth';
 import { Swipe } from '../models/swipe.model';
 
 const swipeRoutes = Router();
 
-swipeRoutes.post('/', checkToken, (req: any, res: Response) => {
+swipeRoutes.post('/:userId/:targetId', (req: any, res: Response) => {
 
     const body = req.body;
 
-    body.swiperId = req.user._id;
+    body.swiperId = req.params.userId;
+    body.targetId = req.params.targetId;
 
     Swipe.create(body).then(swipeDB => {
         res.json({
             ok: true,
-            swipe: swipeDB
+            swipe: swipeDB,
+        });
+    }).catch(err => {
+        res.json(err)
+    })
+
+})
+
+swipeRoutes.get('/:userId/:targetId', (req: any, res: Response) => {
+
+    const body = req.body;
+
+    body.swiperId = req.params.userId;
+    body.targetId = req.params.targetId;
+
+    Swipe.findOne({ swiperId: body.swiperId, targetId: body.targetId }).then(swipeDB => {
+        res.json({
+            ok: true,
+            swipe: swipeDB,
         });
     }).catch(err => {
         res.json(err)

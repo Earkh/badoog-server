@@ -22,7 +22,7 @@ server.app.use(cors_1.default({ origin: true, credentials: true }));
 server.app.use('/user', user_1.default);
 server.app.use('/swipe', swipe_1.default);
 // DB
-mongoose_1.default.connect('mongodb://localhost:27017/badoog', { useNewUrlParser: true, useCreateIndex: true }, (err) => {
+mongoose_1.default.connect('mongodb://localhost:27017/badoog', { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true }, (err) => {
     if (err)
         throw err;
     console.log('DB connected');

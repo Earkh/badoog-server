@@ -9,7 +9,7 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const userSchema = new mongoose_1.Schema({
     name: {
         type: String,
-        required: [true, 'El campo nombre es obligatorio']
+        // required: [true, 'El campo nombre es obligatorio']
     },
     email: {
         type: String,
@@ -25,15 +25,15 @@ const userSchema = new mongoose_1.Schema({
     },
     age: {
         type: Number,
-        required: [true, 'El campo edad es obligatorio']
+        // required: [true, 'El campo edad es obligatorio']
     },
     size: {
         type: String,
-        required: [true, 'El campo tamaño es obligatorio']
+        // required: [true, 'El campo tamaño es obligatorio']
     },
     sex: {
         type: String,
-        required: [true, 'El campo sexo es obligatorio']
+        // required: [true, 'El campo sexo es obligatorio']
     },
     desc: {
         type: String
